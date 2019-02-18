@@ -12,14 +12,19 @@ This project creates a decision tree using sk-learn, and allows the user to crea
 
 Methods:
 load_data: returns a Pandas Dataframe from the csv file
+
 LearnNewTree: interactively guides user to enter all required files
               Returns array containing the tree, list of attributes, and the target attribute
+
 SaveTree: Pickles the array containing tree, attributes and target
            Will interactively guide user to enter all required files
            Returns true if successful, o.w. print error and return false
+
 MakeDecision: Allows for one test case
            Takes the tree, a list of attributes, and the target name
            Prompts user to enter the feature for each attribute
            Returns the target
+
 showTree: Creates a .dot file showing the tree using graphviz
+
 main: A Wrapper, handling errors and walking the user through tree creation 
