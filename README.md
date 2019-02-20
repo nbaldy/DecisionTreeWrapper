@@ -9,14 +9,14 @@ This project creates a decision tree using sk-learn, and allows the user to crea
 Note: data must be in csv format. N/A values are dropped
 
 Recent Modifications:
--Support non-numeric data
-  --->Change load_data method to encode non-numeric attributes using pd.get_dummies
-  ---> This disallows target from being non-numeric, unless I can figure out how to have multiple targets
--Change TargetCol obtaining to require valid column title
--Remove showTree, as not needed for project
--Add getMetrics, as needed for project
--Naming of Tree variables clarified (Array to TreeInfo)
--Remove Regression Tree functionality (unneeded for project)
+-Support non-numeric data/n
+  --->Change load_data method to encode non-numeric attributes using pd.get_dummies/n
+  ---> This disallows target from being non-numeric, unless I can figure out how to have multiple targets/n
+-Change TargetCol obtaining to require valid column title/n
+-Remove showTree, as not needed for project/n
+-Add getMetrics, as needed for project/n
+-Naming of Tree variables clarified (Array to TreeInfo)/n
+-Remove Regression Tree functionality (unneeded for project)/n
 
 Limitations, not planned on improving:
 -Expects .csv file with the first row being attribute titles
