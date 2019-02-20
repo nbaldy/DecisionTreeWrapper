@@ -6,6 +6,7 @@ Additionally, the book "Hands-On Machine Learning with Scikit-Learn and TensorFl
 
 This project creates a decision tree using sk-learn, and allows the user to create a DecisionTree using their own .csv, save the tree, load the tree, and perform more examples using the trees
 </i>
+
 <b><i>Note: data must be in csv format. N/A values are dropped</i></b>
 
 
