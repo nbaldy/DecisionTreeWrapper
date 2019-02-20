@@ -1,5 +1,6 @@
 <i>This was a project originally created for Artificial Intelligence and Heuristic Programming at the University of Akron
-Versions: Python 3.5.6 - Sklearn 0.20.0 - Pandas 0.23.4 - Numpy 1.15.2
+
+<b>Versions: Python 3.5.6 - Sklearn 0.20.0 - Pandas 0.23.4 - Numpy 1.15.2</b>
 
 Special thanks to scikit-learn.org's documentation. The Decision trees implemented here are Classification Tree with the CART Algorithm from the sklearn package.
 Additionally, the book "Hands-On Machine Learning with Scikit-Learn and TensorFlow" by Aurélien Géron was a tremendous help in getting started with this code.
