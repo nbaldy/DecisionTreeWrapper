@@ -17,7 +17,7 @@ This project creates a decision tree using sk-learn, and allows the user to crea
 
   > Change load_data method to encode non-numeric attributes using pd.get_dummies
 
-  > This disallows target from being non-numeric, unless I can figure out how to have multiple targets
+  > TARGET is encoded using labelencoder
 
 - Change TargetCol obtaining to require valid column title
 
@@ -38,8 +38,7 @@ Limitations, not planned on improving:
 
 
 <b> Planned Improvements: </b>
-
-- TARGET cannot be a text field
+- The makeDecision is awful and I don't know why
 
 - Add Regression Tree back in
 
