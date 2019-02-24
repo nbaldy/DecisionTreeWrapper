@@ -10,6 +10,11 @@ This project creates a decision tree using sk-learn, and allows the user to crea
 
 <b><i>Note: data must be in csv format. N/A values are dropped</i></b>
 
+<B> NOT WORKING </B> 
+MakeDecision. UUUUUURGH. MY EYES. I'VE BEEN LOOKING AT IT FOR HOURS AND ALL I FEEL IS PAIN. 
+The dictionaries are messing up ordering and prediction doesn't seem to support DataFrames in terms of correct ordering of labels. 
+So, I probably need to use a different data structure. Trying OrderedDictionaries but it's not working. 
+I'll look at it tomorrow. 
 
 <b>Recent Modifications:</b>
 
@@ -40,6 +45,8 @@ Limitations, not planned on improving:
 <b> Planned Improvements: </b>
 - The makeDecision is awful and I don't know why
 
+- Make Decision inverse_encodes target to return non-numerical attributes
+
 - Add Regression Tree back in
 
 - Visualize tree
@@ -49,41 +56,51 @@ Limitations, not planned on improving:
 - Better MakeDecision function
 
 
+
 <b>Methods:</b>
 
-<b>getDataInfo: </b>
+<b>getAttributes: </b>
             Takes data, returns a list of attributes and their possible values
             If attributes are object-type, lists each possible value,
             If numerical, lists the range
-            Returns a dictionary {"attribute" : [pos_values]}
+            Returns a dictionary {attribute_name : list_of_values}
             
 <b>loadData: </b>
-            Takes a filename, returns a Pandas Dataframe from the csv file
+            Takes a filename, returns a formatted Pandas Dataframe from the csv file
+            Prompts for Target Column, and uses getAttributes to get attribute list
             uses Panda.get_dummies to one-hot encode non-numerical attributes
-            returns the data and encoded attribute information
+            uses LabelEncoder to encode non-numerical target attributes
+            Uses getMetrics to obtain accuracy score
+            returns the encoded data,  attribute information and target column
 
+<b>getMetrics: </b>
+            Takes the tree, test set, and targetCol, returns the accuracy score of the tree
+            Returns the value of sklearn's built-in accuracy_score function with the test set
+            
 <b>LearnNewTree: </b>
-            interactively guides user to enter all required files
-            Returns array containing the tree, list of attributes, and the target attribute
+            Prompts for user input, returns tree information
+            Interactively guides user to enter all required files
+            Uses loadData to obtain attribute list, formatted Dataframe, and target 
+            Creates the decision tree of user-selected max depth
+            Returns array containing the tree, list of attributes, target column, and performance 
 
 <b>SaveTree: </b>
-            Pickles the array containing tree, attributes and target
+           Takes the treeInformation, prompts for save filename, boolean return indicates save success
+           Pickles the array containing tree, attributes, target and performance
            Will interactively guide user to enter all required files
            Returns true if successful, o.w. print error and return false
 
+<b>LoadTree: </b>
+           Prompts for filename, returns tree information
+           Unpickles the array containing tree, attributes, target and performance
+           Returns array containing the tree, list of attributes, target column, and performance 
+           
 <b>MakeDecision: </b>
-            Allows for one test case
-           Takes the tree, a list of attributes, and the target name
+           Takes tree information, prompts for one test case, returns prediction
            Prompts user to enter the feature for each attribute
-           Note that these are One-Hot encoded attributes, 
-           so non-numerical data will prompt for each possibility. 
-           Only one can be "Hot" from each set.
-           Returns the target
-
-<b>getMetrics: </b>
-            Runs sklearn's built-in accuracy_score function with the test set
-            to develop metrics
-
+           Returns the predicted value
 
 <b>main: </b>
-            A Wrapper, handling errors and walking the user through tree creation
+            A Wrapper function for the DecisionTree making, 
+            > Formats the menue and walks user through tree creation
+            > handles errors
