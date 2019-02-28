@@ -1,62 +1,105 @@
-This was a project originally created for Artificial Intelligence and Heuristic Programming at the University of Akron
-Versions: Python 3.5.6 - Sklearn 0.20.0 - Pandas 0.23.4 - Numpy 1.15.2
+﻿<i>This was a project originally created for Artificial Intelligence and Heuristic Programming at the University of Akron
+
+<b>Versions: Python 3.5.6 - Sklearn 0.20.0 - Pandas 0.23.4 - Numpy 1.15.2</b>
 
 Special thanks to scikit-learn.org's documentation. The Decision trees implemented here are Classification Tree with the CART Algorithm from the sklearn package.
 Additionally, the book "Hands-On Machine Learning with Scikit-Learn and TensorFlow" by Aurélien Géron was a tremendous help in getting started with this code.
 
 This project creates a decision tree using sk-learn, and allows the user to create a DecisionTree using their own .csv, save the tree, load the tree, and perform more examples using the trees
+</i>
 
-Note: data must be in csv format. N/A values are dropped
+<b><i>Note: data must be in csv format. N/A values are dropped</i></b>
 
-Recent Modifications:
--Support non-numeric data
-  --->Change load_data method to encode non-numeric attributes using pd.get_dummies
-  ---> This disallows target from being non-numeric, unless I can figure out how to have multiple targets
--Change TargetCol obtaining to require valid column title
--Remove showTree, as not needed for project
--Add getMetrics, as needed for project
--Naming of Tree variables clarified (Array to TreeInfo)
--Remove Regression Tree functionality (unneeded for project)
+<B> NOT WORKING </B> 
+MakeDecision. UUUUUURGH. MY EYES. I'VE BEEN LOOKING AT IT FOR HOURS AND ALL I FEEL IS PAIN. 
+The dictionaries are messing up ordering and prediction doesn't seem to support DataFrames in terms of correct ordering of labels. 
+So, I probably need to use a different data structure. Trying OrderedDictionaries but it's not working. 
+I'll look at it tomorrow. 
+
+<b>Recent Modifications:</b>
+
+- Support non-numeric data
+
+  > Change load_data method to encode non-numeric attributes using pd.get_dummies
+
+  > TARGET is encoded using labelencoder
+
+- Change TargetCol obtaining to require valid column title
+
+- Remove showTree, as not needed for project
+
+- Add getMetrics, as needed for project
+
+- Naming of Tree variables clarified (Array to TreeInfo)
+
+- Remove Regression Tree functionality (unneeded for project)
+
 
 Limitations, not planned on improving:
--Expects .csv file with the first row being attribute titles
--Drops N/A values
 
-Planned Improvements:
--TARGET cannot be a text field
+- Expects .csv file with the first row being attribute titles
+
+- Drops N/A values
+
+
+<b> Improvements I hope to make: </b>
+
 - Add Regression Tree back in
+
 - Visualize tree
-- (?) MakeDecision accept text fields
+
 - Better MakeDecision function
 
+- Target and attributes use different encoding and that's probably a bad
 
-Methods:
-getDataInfo: Tales data, returns a list of attributes and their possible values
+
+
+<b>Methods:</b>
+
+<b>getAttributes: </b>
+            Takes data, returns a list of attributes and their possible values
             If attributes are object-type, lists each possible value,
             If numerical, lists the range
-            Returns a dictionary {"attribute" : [pos_values]}
+            Returns a dictionary {attribute_name : list_of_values}
             
-loadData: Takes a filename, returns a Pandas Dataframe from the csv file
+<b>loadData: </b>
+            Takes a filename, returns a formatted Pandas Dataframe from the csv file
+            Prompts for Target Column, and uses getAttributes to get attribute list
             uses Panda.get_dummies to one-hot encode non-numerical attributes
-            returns the data and encoded attribute information
+            uses LabelEncoder to encode non-numerical target attributes
+            Uses getMetrics to obtain accuracy score
+            returns the encoded data,  attribute information and target column
 
-LearnNewTree: interactively guides user to enter all required files
-            Returns array containing the tree, list of attributes, and the target attribute
+<b>getMetrics: </b>
+            Takes the tree, test set, and targetCol, returns the accuracy score of the tree
+            Returns the value of sklearn's built-in accuracy_score function with the test set
+            
+<b>LearnNewTree: </b>
+            Prompts for user input, returns tree information
+            Interactively guides user to enter all required files
+            Uses loadData to obtain attribute list, formatted Dataframe, and target 
+            Creates the decision tree of user-selected max depth
+            Returns array containing the tree, list of attributes, target column, and performance 
 
-SaveTree: Pickles the array containing tree, attributes and target
+<b>SaveTree: </b>
+           Takes the treeInformation, prompts for save filename, boolean return indicates save success
+           Pickles the array containing tree, attributes, target and performance
            Will interactively guide user to enter all required files
            Returns true if successful, o.w. print error and return false
 
-MakeDecision: Allows for one test case
-           Takes the tree, a list of attributes, and the target name
+<b>LoadTree: </b>
+           Prompts for filename, returns tree information
+           Unpickles the array containing tree, attributes, target and performance
+           Returns array containing the tree, list of attributes, target column, and performance 
+           
+<b>MakeDecision: </b>
+           Takes tree information, prompts for one test case, returns prediction
            Prompts user to enter the feature for each attribute
-           Note that these are One-Hot encoded attributes, 
-           so non-numerical data will prompt for each possibility. 
-           Only one can be "Hot" from each set.
-           Returns the target
+           Returns the predicted value
 
-getMetrics: Runs sklearn's built-in accuracy_score function with the test set
-            to develop metrics
-
-
-main: A Wrapper, handling errors and walking the user through tree creation
+<b>main: </b>
+            A Wrapper function for the DecisionTree making,
+            <i>
+            - Formats the menue and walks user through tree creation
+            - handles errors
+            </i>
