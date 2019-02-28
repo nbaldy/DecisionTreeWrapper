@@ -100,6 +100,6 @@ Limitations, not planned on improving:
 <b>main: </b>
             A Wrapper function for the DecisionTree making, 
             
-            > Formats the menue and walks user through tree creation
+            - Formats the menue and walks user through tree creation
             
-            > handles errors
+            - handles errors
