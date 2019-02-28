@@ -1,4 +1,4 @@
-<i>This was a project originally created for Artificial Intelligence and Heuristic Programming at the University of Akron
+﻿<i>This was a project originally created for Artificial Intelligence and Heuristic Programming at the University of Akron
 
 <b>Versions: Python 3.5.6 - Sklearn 0.20.0 - Pandas 0.23.4 - Numpy 1.15.2</b>
 
@@ -42,18 +42,15 @@ Limitations, not planned on improving:
 - Drops N/A values
 
 
-<b> Planned Improvements: </b>
-- The makeDecision is awful and I don't know why
-
-- Make Decision inverse_encodes target to return non-numerical attributes
+<b> Improvements I hope to make: </b>
 
 - Add Regression Tree back in
 
 - Visualize tree
 
-- MakeDecision accept text fields (?)
-
 - Better MakeDecision function
+
+- Target and attributes use different encoding and that's probably a bad
 
 
 
