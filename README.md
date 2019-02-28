@@ -98,8 +98,9 @@ Limitations, not planned on improving:
            Returns the predicted value
 
 <b>main: </b>
-            A Wrapper function for the DecisionTree making, 
-            
+            A Wrapper function for the DecisionTree making,
+            <i>
             - Formats the menue and walks user through tree creation
             
             - handles errors
+            </i>
