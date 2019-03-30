@@ -1,6 +1,3 @@
-#Nicole Baldy
-#Fixing AI project
-
 import pandas as pd
 import pickle
 from sklearn.model_selection import train_test_split
@@ -22,8 +19,7 @@ def loadData(filename):
     while targetCol not in list(data):
         print(list(data))
         targetCol = input(">> ")
-    targetOptions = data[targetCol].unique()
-
+    targetOptions = data[targetCol].unique()  
     le = -1
     if data[targetCol].dtype == object:
         le = LabelEncoder()
@@ -32,8 +28,8 @@ def loadData(filename):
 
     data = pd.get_dummies(data)
     return (data, targetCol, le)
-
-################################
+  
+###############################
 # Takes the test set, the targetCol, and the tree
 # Computes the accuracy using sklearn's accuracy_score
 # Returns the accuracy score
@@ -170,8 +166,7 @@ def LoadTree():
         while treeFile == "":
             treeFile = input("Tree File Name: ")
         myTreeInfo = pickle.load(open(treeFile+".pickle", "rb"))
-
-
+        
     except Exception as e:
         print("LoadTree file {} is invalid".format(treeFile))
         return -1
@@ -235,7 +230,6 @@ def main():
         print(e)
         print("Program terminating...")
         return(1)
-
 
 if __name__== "__main__":
        myTreePicture = main()
