@@ -1,18 +1,3 @@
-
-# coding: utf-8
-
-# In[ ]:
-
-
-###################################
-# Drawbacks:
-#  Expects .csv file with the first row being attribute titles
-#  Drops NA
-
-
-# In[ ]:
-
-
 import pandas as pd
 import pickle
 from sklearn.model_selection import train_test_split
@@ -22,28 +7,9 @@ from sklearn.metrics import accuracy_score
 from collections import OrderedDict
 from sklearn.preprocessing import LabelEncoder
 
-
-####################
-# getAttributes (helper to loadData)
-# Takes a panda dataframe
-# Creates an ORDERED dictionary containing
-# {colName: [possible_values]} for text attributes
-# or {colName:[range]} for numerical attributes
-####################
-def getAttributes(data):
-    attributes = OrderedDict()
-    for col in data.columns:
-        if data[col].dtype != object:
-            attributes[col] = [data[col].min(), data[col].max()]
-        else:
-            attributes[col] = list(data[col].unique())
-    return attributes
-
-
 #########################
-# loadData (Helper to LearnNewTree)
 # Deletes duplicates, one-hot encodes data
-# Returns data (Pandas DF) and feature list (Dict)
+# Returns data (pandas DF), targetCol (str), and encoder
 #############################
 def loadData(filename):
     data = pd.read_csv(filename).dropna()
@@ -53,8 +19,7 @@ def loadData(filename):
     while targetCol not in list(data):
         print(list(data))
         targetCol = input(">> ")
-
-    attributes = getAttributes(data.drop(targetCol, axis=1).copy())
+    targetOptions = data[targetCol].unique()  
     le = -1
     if data[targetCol].dtype == object:
         le = LabelEncoder()
@@ -62,12 +27,9 @@ def loadData(filename):
         data[targetCol] = le.transform(data[targetCol])
 
     data = pd.get_dummies(data)
-
-    return (attributes, data, targetCol, le)
-
-
-################################
-# getMetrics (Helper to  LearnNewTree)
+    return (data, targetCol, le)
+  
+###############################
 # Takes the test set, the targetCol, and the tree
 # Computes the accuracy using sklearn's accuracy_score
 # Returns the accuracy score
@@ -81,10 +43,9 @@ def getMetrics(myTree, myTests, targetCol):
 
 
 #####################
-# LearnNewTree (1)
+# Learn new Tree
 # Will interactively guide user to enter all required files
-# Returns array containing the tree, attribute list, target attribute,
-#                              target attribute, and encoded attributes
+# Returns array containing the tree, list of attributes, and the encoding system information
 #####################
 def LearnNewTree():
     dataPath = input("Enter name of data file: ")
@@ -94,7 +55,7 @@ def LearnNewTree():
         else: dataPath = input("Sorry, we need a .CSV file.\nEnter New File: ")
 
     try:
-        attributes, data, targetCol, le  = loadData(dataPath)
+        data, targetCol, le = loadData(dataPath)
         train_set, test_set = train_test_split(data, test_size = 0.2, random_state = 42)
 
         X = train_set.drop(targetCol, axis=1).copy()
@@ -120,9 +81,9 @@ def LearnNewTree():
         performance = getMetrics(myTree, test_set, y.name)
         print("Tree Accuracy Score: ", performance)
 
-        if le != -1:
-            return ([myTree, attributes, y.name, performance, list(X), le])
-        return ([myTree, attributes, y.name, performance, list(X)])
+        if le == -1:
+            return [myTree, list(X), (False, sorted(y.unique()))]
+        return [myTree, list(X), (True, le)]
 
     except Exception as e:
         print("Exception: " ,e)
@@ -131,8 +92,7 @@ def LearnNewTree():
 
 
 #####################
-# SaveTree (2)
-# Pickles the array containing tree, attributes and target
+# Pickles the array containing tree information
 # Will interactively guide user to enter all required files
 # Returns true if successful, o.w. print error and return false
 #####################
@@ -148,12 +108,57 @@ def SaveTree(myTreeInfo):
         print("Oops, ", e)
         return false
 
+########################
+# Allows for one test case
+# Takes the tree information
+# Starts at first node in decision tree
+# Asks if data is less than or greater than threshold
+# Goes until reaches leaf node
+# No Return
+########################
+def MakeDecision(myTreeInfo):
+
+    myTree, myFeatures, encoding = myTreeInfo[0], myTreeInfo[1], myTreeInfo[2]
+    nodeList=[]
+
+    for node in range(0, myTree.tree_.node_count):
+        prediction_values = myTree.tree_.value[node][0]
+
+        largest = 0
+        for i in range(0, len(prediction_values)):
+            if prediction_values[i] > prediction_values[largest]:
+                largest = i
+        if encoding[0]:
+            prediction = encoding[1].inverse_transform([largest])[0]
+        else:
+            prediction = encoding[1][largest]
+        nodeList.append((myFeatures[myTree.tree_.feature[node]],
+                         myTree.tree_.threshold[node],
+                         myTree.tree_.children_left[node],
+                         myTree.tree_.children_right[node],
+                         prediction
+                        ))
+    current = 0
+    while nodeList[current][2] > 0: #Not a leaf
+        node = nodeList[current]
+        print("{}: '<' (less than) or '>' (greater than): {}?".format(node[0],node[1]))
+        operation = input(">> ")
+        while operation not in [">","<"]:
+            print("Must be > or <")
+            operation = input(">> ")
+        if operation == "<":
+            current = node[2] #left
+        else:
+            current = node[3] #Right
+        node = nodeList[current]
+        print("Current Prediction is ", node[4])
+    print("Final Prediction is ", node[4])
 
 #####################
-# LoadTree (4)
-# Unpickles the array containing the tree, attributes and target
+# Unpickles the array containing the tree information
 # Will interactively guide user to enter all required files
-# Returns the tree, attributes, and target
+# Begins to make decision with tree
+# Returns nothing
 #####################
 def LoadTree():
     try:
@@ -161,58 +166,18 @@ def LoadTree():
         while treeFile == "":
             treeFile = input("Tree File Name: ")
         myTreeInfo = pickle.load(open(treeFile+".pickle", "rb"))
-        return myTreeInfo
-
+        
     except Exception as e:
         print("LoadTree file {} is invalid".format(treeFile))
         return -1
-
-
-
-########################
-# MakeDecision (3)
-# Allows for one test case
-# Takes the tree, a list of attributes, and the target name
-# Prompts user to enter the feature for each attribute
-# (Note that these are one-hot encoded attributes)
-# Returns the target
-########################
-def MakeDecision(myTreeInfo):
-    try:
-        tree, attrSet, encodedAttr = myTreeInfo[0], myTreeInfo[1], myTreeInfo[4]
-        featureSet = OrderedDict()
-        for enc in encodedAttr:
-            featureSet[enc] = [0]
-        for attr in attrSet:
-            userIn = ""
-            if type(attrSet[attr][0]) == str:
-                while userIn not in attrSet[attr]:
-                    userIn = input("{}: Possible values are {}\n>> ".format(attr, attrSet[attr]))
-                featureSet[attr+"_"+userIn] = [1]
-            else:
-                while True:
-                    userIn = input("{}: Range is {}\n>> ".format(attr, attrSet[attr]))
-                    try:
-                        featureSet[attr] = [float(userIn)]
-                        break
-                    except:
-                        print("Please ensure data is numerical")
-                        continue
-        prediction =  tree.predict(pd.DataFrame(featureSet))
-        if len(myTreeInfo) == 6:
-            encoder = myTreeInfo[5]
-            prediction = encoder.inverse_transform(prediction)
-        return prediction
-
-    except Exception as e:
-        print("Whoops! ", e)
-        return -1
-
-###############################
-#define Main Method -
-# Guide User through building tree
-# Handle errors
-################################
+    userIn = "3"
+    print("\nApply Decision Tree\n")
+    while(userIn.find("3") != -1):
+        MakeDecision(myTreeInfo)
+        userIn = input(  "(3) to continue decision-making\n"
+                         "(5) to quit\n"
+                         ">> "
+                      )
 def main():
     try:
         myTreeInfo = -1 #empty Tree
@@ -243,7 +208,7 @@ def main():
             elif userIn.find("3") != -1:
                 print("\nApply Decision Tree\n")
                 while(userIn.find("3") != -1):
-                    print("Decision: ", MakeDecision(myTreeInfo))
+                    MakeDecision(myTreeInfo)
                     userIn = input(  "(3) to continue decision-making\n"
                                      "(5) to quit\n"
                                      ">> "
@@ -251,10 +216,7 @@ def main():
 
             elif userIn.find("4") != -1:
                 print("\nLoading Tree\n")
-                myTreeInfo = LoadTree()
-                if myTreeInfo != -1:
-                    print("Tree Accuracy Score: ", myTreeInfo[3])
-
+                LoadTree()
             elif userIn.find("5") != -1:
                 print("\nQuitting program...\n")
                 break
@@ -269,6 +231,5 @@ def main():
         print("Program terminating...")
         return(1)
 
-#Run Main Method
 if __name__== "__main__":
        myTreePicture = main()
