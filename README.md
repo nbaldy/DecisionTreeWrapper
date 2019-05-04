@@ -23,13 +23,12 @@ This project creates a decision tree using sk-learn, and allows the user to crea
   * Uses getMetrics to obtain accuracy score
   * Returns the encoded data, target column, and encoder or -1
 
+*	GetMetrics:
+    * Takes the tree, test set, and targetCol, returns the accuracy score of the tree
+    * Returns the value of sklearn's built-in accuracy_score function with the test set
 
-*	getMetrics:
-  * Takes the tree, test set, and targetCol, returns the accuracy score of the tree
-  * Returns the value of sklearn's built-in accuracy_score function with the test set
 
-
- * LearnNewTree:
+* LearnNewTree:
   * Prompts for user input, returns tree information
   * Interactively guides user to enter all required files
   * Uses loadData to obtain attribute list, formatted Dataframe, and target
@@ -40,28 +39,25 @@ This project creates a decision tree using sk-learn, and allows the user to crea
         * (False, sorted target classes) if numerical
 
 * SaveTree:
-  * Takes the treeInformation, prompts for save filename, boolean return indicates save success
-  * Pickles the array containing tree, attributes, target and performance
-  * Will interactively guide user to enter all required files
-  * Returns true if successful, o.w. print error and return false
-
+    * Takes the treeInformation, prompts for save filename, boolean return indicates save success
+    * Pickles the array containing tree, attributes, target and performance
+    * Will interactively guide user to enter all required files
+    * Returns true if successful, o.w. print error and return false
 
 * LoadTree:
-  * Prompts for filename, returns tree information
-  * Unpickles the array containing tree, attributes, target and performance
-  * Calls MakeDecision until user chooses to quit
-  * No Return
-
+    * Prompts for filename, returns tree information
+    * Unpickles the array containing tree, attributes, target and performance
+    * Calls MakeDecision until user chooses to quit
+    * No Return
 
 * MakeDecision:
-  * Takes tree information, interactively guides user through decision making
-  * Starts at first node in decision tree
-  * Asks if data is less than or greater than threshold
-  * Goes until reaches leaf node
-  * Prints final decision
-
+    * Takes tree information, interactively guides user through decision making
+    * Starts at first node in decision tree
+    * Asks if data is less than or greater than threshold
+    * Goes until reaches leaf node
+    * Prints final decision
 
 * **main:**
-  * A Wrapper function for the DecisionTree making,
-  * Formats the menu and walks user through tree creation
-  * Handles errors
+    * A Wrapper function for the DecisionTree making,
+    * Formats the menu and walks user through tree creation
+    * Handles errors
