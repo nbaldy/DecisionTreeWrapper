@@ -10,96 +10,58 @@ This project creates a decision tree using sk-learn, and allows the user to crea
 
 <b><i>Note: data must be in csv format. N/A values are dropped</i></b>
 
-<B> NOT WORKING </B> 
-MakeDecision. UUUUUURGH. MY EYES. I'VE BEEN LOOKING AT IT FOR HOURS AND ALL I FEEL IS PAIN. 
-The dictionaries are messing up ordering and prediction doesn't seem to support DataFrames in terms of correct ordering of labels. 
-So, I probably need to use a different data structure. Trying OrderedDictionaries but it's not working. 
-I'll look at it tomorrow. 
-
-<b>Recent Modifications:</b>
-
-- Support non-numeric data
-
-  > Change load_data method to encode non-numeric attributes using pd.get_dummies
-
-  > TARGET is encoded using labelencoder
-
-- Change TargetCol obtaining to require valid column title
-
-- Remove showTree, as not needed for project
-
-- Add getMetrics, as needed for project
-
-- Naming of Tree variables clarified (Array to TreeInfo)
-
-- Remove Regression Tree functionality (unneeded for project)
+**Supports non-numeric data, though it must OneHotEncode attributes and uses LabelEncoder for target if they are text fields**
+- *I don't like using two different encoding sysems, but labelEncoder isn't good to use for attributes, as it causes unintentional relations between text fields (ex: "Blue" =1, "Grey" = 2, "Yellow" = 3; "Yellow" is closer to "Grey")*
+- *I had trouble with multiple targets, so I didn't want to OneHot encode target. Also, I can inverse-encode it for usability easier. There's probably a better way and I'll get around to it eventually*
 
 
-Limitations, not planned on improving:
-
-- Expects .csv file with the first row being attribute titles
-
-- Drops N/A values
-
-
-<b> Improvements I hope to make: </b>
-
-- Add Regression Tree back in
-
-- Visualize tree
-
-- Better MakeDecision function
-
-- Target and attributes use different encoding and that's probably a bad
+**Methods:**
+* loadData:
+  * Takes a filename, returns a formatted Pandas Dataframe from the csv file
+  * Uses Panda.get_dummies to one-hot encode non-numerical attributes
+  * Uses LabelEncoder to encode non-numerical target attributes
+  * Uses getMetrics to obtain accuracy score
+  * Returns the encoded data, target column, and encoder or -1
 
 
+*	getMetrics:
+  * Takes the tree, test set, and targetCol, returns the accuracy score of the tree
+  * Returns the value of sklearn's built-in accuracy_score function with the test set
 
-<b>Methods:</b>
 
-<b>getAttributes: </b>
-            Takes data, returns a list of attributes and their possible values
-            If attributes are object-type, lists each possible value,
-            If numerical, lists the range
-            Returns a dictionary {attribute_name : list_of_values}
-            
-<b>loadData: </b>
-            Takes a filename, returns a formatted Pandas Dataframe from the csv file
-            Prompts for Target Column, and uses getAttributes to get attribute list
-            uses Panda.get_dummies to one-hot encode non-numerical attributes
-            uses LabelEncoder to encode non-numerical target attributes
-            Uses getMetrics to obtain accuracy score
-            returns the encoded data,  attribute information and target column
+ * LearnNewTree:
+  * Prompts for user input, returns tree information
+  * Interactively guides user to enter all required files
+  * Uses loadData to obtain attribute list, formatted Dataframe, and target
+  * Creates the decision tree of user-selected max depth
+  * Returns array containing the tree, list of attributes, and encoding information
+     * encoded information in the form
+        * (True, labelEncoder) if non-numerical
+        * (False, sorted target classes) if numerical
 
-<b>getMetrics: </b>
-            Takes the tree, test set, and targetCol, returns the accuracy score of the tree
-            Returns the value of sklearn's built-in accuracy_score function with the test set
-            
-<b>LearnNewTree: </b>
-            Prompts for user input, returns tree information
-            Interactively guides user to enter all required files
-            Uses loadData to obtain attribute list, formatted Dataframe, and target 
-            Creates the decision tree of user-selected max depth
-            Returns array containing the tree, list of attributes, target column, and performance 
+* SaveTree:
+  * Takes the treeInformation, prompts for save filename, boolean return indicates save success
+  * Pickles the array containing tree, attributes, target and performance
+  * Will interactively guide user to enter all required files
+  * Returns true if successful, o.w. print error and return false
 
-<b>SaveTree: </b>
-           Takes the treeInformation, prompts for save filename, boolean return indicates save success
-           Pickles the array containing tree, attributes, target and performance
-           Will interactively guide user to enter all required files
-           Returns true if successful, o.w. print error and return false
 
-<b>LoadTree: </b>
-           Prompts for filename, returns tree information
-           Unpickles the array containing tree, attributes, target and performance
-           Returns array containing the tree, list of attributes, target column, and performance 
-           
-<b>MakeDecision: </b>
-           Takes tree information, prompts for one test case, returns prediction
-           Prompts user to enter the feature for each attribute
-           Returns the predicted value
+* LoadTree:
+  * Prompts for filename, returns tree information
+  * Unpickles the array containing tree, attributes, target and performance
+  * Calls MakeDecision until user chooses to quit
+  * No Return
 
-<b>main: </b>
-            A Wrapper function for the DecisionTree making,
-            <i>
-            - Formats the menue and walks user through tree creation
-            - handles errors
-            </i>
+
+* MakeDecision:
+  * Takes tree information, interactively guides user through decision making
+  * Starts at first node in decision tree
+  * Asks if data is less than or greater than threshold
+  * Goes until reaches leaf node
+  * Prints final decision
+
+
+* **main:**
+  * A Wrapper function for the DecisionTree making,
+  * Formats the menu and walks user through tree creation
+  * Handles errors
